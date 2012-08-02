@@ -32,7 +32,7 @@ class DateRangeType extends AbstractType
         $this->container        = $container;
     }
 
-    public function getDefaultOptions()
+    public function getDefaultOptions(array $options)
     {
         return array(
             'default' => null

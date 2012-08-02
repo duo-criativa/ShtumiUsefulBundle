@@ -21,7 +21,7 @@ class AjaxAutocompleteType extends AbstractType
         $this->container = $container;
     }
 
-    public function getDefaultOptions()
+    public function getDefaultOptions(array $options)
     {
         return array(
             'entity_alias'      => null,

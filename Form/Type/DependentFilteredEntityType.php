@@ -20,7 +20,7 @@ class DependentFilteredEntityType extends AbstractType
         $this->container = $container;
     }
 
-    public function getDefaultOptions()
+    public function getDefaultOptions(array $options)
     {
         return array(
             'empty_value'       => '',

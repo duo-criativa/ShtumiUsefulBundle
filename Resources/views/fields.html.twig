@@ -7,36 +7,40 @@
 
     </script>
 
-    <script>
-        $(function() {
+    <script type="text/javascript">
+        require(['jquery'], function($){
 
-            $( "#{{ form.getVars().id }}"  ).autocomplete({
-                source: function( request, response ) {
-                    $.ajax({
-                        url: "{{ path('shtumi_ajaxautocomplete') }}",
-                        dataType: "json",
-                        data: {
-                            maxRows: 12,
-                            letters: request.term,
-                            entity_alias: "{{ entity_alias }}"
-                        },
-                        success: function( data ) {
-                            response( $.map( data, function( item ) {
-                                return {
-                                    label: item,
-                                    value: item
-                                }
-                            }));
-                        }
-                    });
-                },
-                minLength: 2,
-                open: function() {
-                    $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-                },
-                close: function() {
-                    $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-                }
+            $(function() {
+
+                $( "#{{ form.getVars().id }}"  ).autocomplete({
+                    source: function( request, response ) {
+                        $.ajax({
+                            url: "{{ path('shtumi_ajaxautocomplete') }}",
+                            dataType: "json",
+                            data: {
+                                maxRows: 12,
+                                letters: request.term,
+                                entity_alias: "{{ entity_alias }}"
+                            },
+                            success: function( data ) {
+                                response( $.map( data, function( item ) {
+                                    return {
+                                        label: item,
+                                        value: item
+                                    }
+                                }));
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    open: function() {
+                        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+                    },
+                    close: function() {
+                        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+                    }
+                });
+
             });
 
         });
@@ -71,40 +75,44 @@
 
     <img src='{{ asset('bundles/shtumiuseful/images/ajax-loader.gif' ) }}' id='loader' style='display: none;'>
     <script type="text/javascript">
-        $(document).ready(function(){
+        require(['jquery'], function($){
 
-            $("select#{{ form.parent.getChild( parent_field ).getVars().id }}").change( function() {
-                var selected_index = {{ value ? value : 0 }};
-                $("#loader").show();
-                $.ajax({
-                    type: "POST",
-                    data: {
-                        parent_id: $(this).val(),
-                        entity_alias: "{{ entity_alias }}",
-                        empty_value: "{{ empty_value }}"
-                    },
-                    url:"{{ path('shtumi_dependent_filtered_entity') }}",
-                    success: function(msg){
-                        if (msg != ''){
-                            $("select#{{ form.getVars().id }}").html(msg).show();
-                            $.each($("select#{{ form.getVars().id }} option"), function (index, option){
-                                if ($(option).val() == selected_index)
-                                    $(option).attr('selected', 'selected');
-                            })
-                            $("#loader").hide();
+            $(document).ready(function(){
+
+                $("select#{{ form.parent.getChild( parent_field ).getVars().id }}").change( function() {
+                    var selected_index = {{ value is not empty ? value : 0 }};
+                    $("#loader").show();
+                    $.ajax({
+                        type: "POST",
+                        data: {
+                            parent_id: $(this).val(),
+                            entity_alias: "{{ entity_alias }}",
+                            empty_value: "{{ empty_value }}"
+                        },
+                        url:"{{ path('shtumi_dependent_filtered_entity') }}",
+                        success: function(msg){
+                            if (msg != ''){
+                                $("select#{{ form.getVars().id }}").html(msg).show();
+                                $.each($("select#{{ form.getVars().id }} option"), function (index, option){
+                                    if ($(option).val() == selected_index)
+                                        $(option).attr('selected', 'selected');
+                                })
+                                $("#loader").hide();
+                            }
+                            else
+                            {
+                                $("select#{{ form.getVars().id }}").html('<em>{{ no_result_msg|trans() }}</em>');
+                                $("#loader").hide();
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError){
+                            $('html').html(xhr.responseText);
                         }
-                        else
-                        {
-                            $("select#{{ form.getVars().id }}").html('<em>{{ no_result_msg|trans() }}</em>');
-                            $("#loader").hide();
-                        }
-                    },
-                    error: function(xhr, ajaxOptions, thrownError){
-                    $('html').html(xhr.responseText);
-                    } 
+                    });
                 });
+                $("select#{{ form.parent.getChild( parent_field ).getVars().id }}").trigger('change');
             });
-            $("select#{{ form.parent.getChild( parent_field ).getVars().id }}").trigger('change');
+
         });
     </script>
 
@@ -119,10 +127,14 @@
     <script type="text/javascript" src="{{ asset('bundles/shtumiuseful/js/datepicker/jquery.datepick-' ~ locale[0:2] ~ '.js') }}"></script>
 
     <script>
-        $(function(){
-            $('input#{{ form.getVars().id }}').datepick({
-                rangeSelect: true, monthsToShow: 2, showTrigger: '#calImg', dateFormat: '{{ datepicker_date_format }}' });
-        })
+        require(['jquery'], function($){
+
+            $(function(){
+                $('input#{{ form.getVars().id }}').datepick({
+                    rangeSelect: true, monthsToShow: 2, showTrigger: '#calImg', dateFormat: '{{ datepicker_date_format }}' });
+            });
+
+        });
     </script>
 
     <input {{ block('widget_attributes') }} value="{{ value }}" class="shtumi-daterange">
